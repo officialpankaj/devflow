@@ -4,7 +4,9 @@ import "./globals.css";
 import Themeprovider from "@/context/theme";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-import Navbar from "@/components/navigation/navbar";
+import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@/components/ui/toast";
+import { auth } from "@/auth";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -28,20 +30,25 @@ export const metadata: Metadata = {
     icon: "/images/site-logo.svg",
   },
 };
+const RootLayout = async ({ children }: LayoutProps<"/">) => {
+  const session = await auth();
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
       className={cn("h-full", "antialiased", inter.className, spaceGrotesk.variable, "font-sans", geist.variable)}
       suppressHydrationWarning={true}
     >
-      <body className="flex min-h-full flex-col">
-        <Themeprovider attribute="class" defaultTheme="system" enableSystem={true} disableTransitionOnChange={true}>
-          <Navbar />
-          {children}
-        </Themeprovider>
-      </body>
+      <SessionProvider session={session}>
+        <body className="flex min-h-full flex-col">
+          <Themeprovider attribute="class" defaultTheme="system" enableSystem={true} disableTransitionOnChange={true}>
+            {children}
+          </Themeprovider>
+          <Toaster />
+        </body>
+      </SessionProvider>
     </html>
   );
-}
+};
+
+export default RootLayout;
