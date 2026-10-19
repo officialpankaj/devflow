@@ -39,6 +39,14 @@ const RootLayout = async ({ children }: LayoutProps<"/">) => {
       className={cn("h-full", "antialiased", inter.className, spaceGrotesk.variable, "font-sans", geist.variable)}
       suppressHydrationWarning={true}
     >
+      <head>
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+        />
+        <title>DevOverflow</title>
+      </head>
       <SessionProvider session={session}>
         <body className="flex min-h-full flex-col">
           <Themeprovider attribute="class" defaultTheme="system" enableSystem={true} disableTransitionOnChange={true}>
