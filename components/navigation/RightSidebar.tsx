@@ -20,12 +20,12 @@ const popularTags = [
 
 const RightSidebar = () => {
   return (
-    <section className="custom-scrollbar background-light900_dark200 light-border shadow-light-300 max-h:hidden sticky top-0 right-0 flex h-screen w-87.5 flex-col gap-6 overflow-y-auto border-l p-6 pt-36 dark:shadow-none">
+    <section className="custom-scrollbar background-light900_dark200 light-border shadow-light-300 sticky top-0 right-0 flex h-screen w-87.5 flex-col gap-6 overflow-y-auto border-l p-6 pt-36 max-xl:hidden dark:shadow-none">
       <div>
         <h3 className="h3-bold text-dark200_light900">Top Questions</h3>
         <div className="mt-7 flex w-full flex-col gap-7.5">
           {hotQuestions.map(({ _id, title }) => (
-            <Link href={`/question/${_id}`} className="flex-between cursor-pointer">
+            <Link href={`/question/${_id}`} key={_id} className="flex-between cursor-pointer">
               <p className="body-medium text-dark500_light700">{title}</p>
 
               <Image src="/icons/chevron-right.svg" alt="Chevron" width={20} height={20} className="invert-colors" />
