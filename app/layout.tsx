@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -30,8 +31,21 @@ export const metadata: Metadata = {
     icon: "/images/site-logo.svg",
   },
 };
-const RootLayout = async ({ children }: LayoutProps<"/">) => {
+const AuthSessionProvider = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
+
+  return <SessionProvider session={session}>{children}</SessionProvider>;
+};
+
+const RootLayout = ({ children }: LayoutProps<"/">) => {
+  const content = (
+    <>
+      <Themeprovider attribute="class" defaultTheme="system" enableSystem={true} disableTransitionOnChange={true}>
+        {children}
+      </Themeprovider>
+      <Toaster />
+    </>
+  );
 
   return (
     <html
@@ -47,14 +61,11 @@ const RootLayout = async ({ children }: LayoutProps<"/">) => {
         />
         <title>DevOverflow</title>
       </head>
-      <SessionProvider session={session}>
-        <body className="flex min-h-full flex-col">
-          <Themeprovider attribute="class" defaultTheme="system" enableSystem={true} disableTransitionOnChange={true}>
-            {children}
-          </Themeprovider>
-          <Toaster />
-        </body>
-      </SessionProvider>
+      <body className="flex min-h-full flex-col" suppressHydrationWarning={true}>
+        <Suspense fallback={<SessionProvider>{content}</SessionProvider>}>
+          <AuthSessionProvider>{content}</AuthSessionProvider>
+        </Suspense>
+      </body>
     </html>
   );
 };

@@ -16,7 +16,19 @@ interface Props {
 const Metric = ({ imgUrl, alt, value, title, href, textStyles, imgStyles = "", isAuthor }: Props) => {
   const metricContent = (
     <>
-      <Image src={imgUrl} alt={alt} width={16} height={16} className={cn("rounded-full object-contain", imgStyles)} />
+      {imgUrl ? (
+        <Image src={imgUrl} alt={alt} width={16} height={16} className={cn("rounded-full object-contain", imgStyles)} />
+      ) : (
+        <span
+          aria-hidden
+          className={cn(
+            "flex size-4 shrink-0 items-center justify-center rounded-full bg-light-700 text-[10px] uppercase dark:bg-dark-400",
+            imgStyles
+          )}
+        >
+          {alt.charAt(0)}
+        </span>
+      )}
       <p className={cn("flex items-center gap-1", textStyles)}>
         {value}
         <span className={cn("small-regular line-clamp-1", { "max-sm:hidden": isAuthor })}>{title}</span>
