@@ -23,6 +23,16 @@ const nextConfig: NextConfig = {
         hostname: "cdn-icons-png.flaticon.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.googleusercontent.com",
+        port: "",
+      },
     ],
   },
 };
