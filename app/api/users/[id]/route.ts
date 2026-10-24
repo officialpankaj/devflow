@@ -6,7 +6,7 @@ import User from "@/database/user.model";
 import { NextResponse } from "next/server";
 import { UserSchema } from "@/lib/validations";
 
-// GET /api/user/[id]
+// GET /api/users/[id]
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!id) throw new NotFoundError("User");
@@ -23,7 +23,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   }
 }
 
-// DELETE /api/user/[id]
+// DELETE /api/users/[id]
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!id) throw new NotFoundError("User");
@@ -41,7 +41,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
 }
 
 // PUT /api/users/[id]
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!id) throw new NotFoundError("User");
 
