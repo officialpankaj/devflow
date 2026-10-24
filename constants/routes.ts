@@ -11,6 +11,7 @@ const ROUTES = {
   PROFILE: "/profile",
   PROFILE_DETAIL: (id: string) => `/profile/${id}`,
   ASK_QUESTION: "/ask-a-question",
+  SIGNIN_WITH_OAUTH: "signin-with-oauth",
 };
 
 export default ROUTES;

@@ -47,7 +47,7 @@ const AuthForm = <T extends FieldValues>({ schema, defaultValues, onSubmit, form
                     required
                     type={fieldName === "password" ? "password" : "text"}
                     {...field}
-                    className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 no-focus rounded"
+                    className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 no-focus min-h-fit rounded py-3"
                   />
                 </FormControl>
               </FormItem>
