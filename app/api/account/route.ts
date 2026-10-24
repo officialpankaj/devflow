@@ -19,7 +19,7 @@ export async function GET() {
   }
 }
 
-// Create User
+// Create Account
 export async function POST(request: Request) {
   try {
     const body = await request.json();

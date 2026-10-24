@@ -27,7 +27,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
 // DELETE /api/account/[id]
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!id) throw new NotFoundError("User");
+  if (!id) throw new NotFoundError("Account");
 
   try {
     await dbConnect();
