@@ -9,22 +9,42 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { Input } from "@/components/ui/input";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
+import { ActionResponse } from "@/types/global";
+import { toast } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T, T>;
   defaultValues: T;
-  onSubmit: (data: T) => Promise<{ success: boolean }>;
+  onSubmit: (data: T) => Promise<ActionResponse>;
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
 const AuthForm = <T extends FieldValues>({ schema, defaultValues, onSubmit, formType }: AuthFormProps<T>) => {
+  const router = useRouter();
+
   const form = useForm<T>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
   const handleSubmit: SubmitHandler<T> = async (data) => {
-    // Authenticate User
+    const result = (await onSubmit(data)) as ActionResponse;
+
+    if (result?.success) {
+      toast.add({
+        title: "Success",
+        description: formType === "SIGN_IN" ? "Signed in successfully" : "Signed up successfully",
+      });
+
+      router.push(ROUTES.HOME);
+    } else {
+      toast.add({
+        title: `Error ${result?.status}`,
+        description: result?.error?.message,
+        type: "destructive",
+      });
+    }
   };
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
