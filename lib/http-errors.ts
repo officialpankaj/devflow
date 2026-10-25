@@ -53,3 +53,10 @@ export class UnauthorizedError extends RequestError {
     this.name = "UnauthorizedError";
   }
 }
+
+export class ConflictError extends RequestError {
+  constructor(message: string = "Conflict") {
+    super(409, message);
+    this.name = "ConflictError";
+  }
+}
