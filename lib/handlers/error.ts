@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { RequestError, ValidationError } from "@/lib/http-errors";
 import { ZodError } from "zod";
-import { Error } from "mongoose";
 import logger from "@/lib/logger";
 
 export type ResponseType = "api" | "server";
@@ -38,7 +37,7 @@ const handleError = (error: unknown, responseType: ResponseType = "server") => {
 
   if (error instanceof Error) {
     logger.error(error.message);
-    return formatResponse(responseType, 500, error.message);
+    return formatResponse(responseType, 500, typeof error === "string" ? error : error?.message);
   }
 
   logger.error({ err: error }, "An unexpected error has occurred");
