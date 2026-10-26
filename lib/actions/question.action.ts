@@ -177,7 +177,7 @@ export async function getQuestion(params: GetQuestionParams): Promise<ActionResp
   const { questionId } = validationResult.params!;
 
   try {
-    const question = await Question.findById(questionId).populate(["tags", "author"]);
+    const question = await Question.findById(questionId).populate("tags", "name").populate("author", "name image");
 
     if (!question) {
       throw new NotFoundError("Question");
@@ -240,6 +240,8 @@ export async function getQuestions(
       .sort(sortCriteria)
       .skip(skip)
       .limit(limit);
+
+    console.log("questions", JSON.stringify(questions));
 
     const isNext = totalQuestions > skip + questions.length;
 
