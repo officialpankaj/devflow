@@ -154,7 +154,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
                 <Editor value={field.value} fieldChange={field.onChange} editorRef={editorRef} />
               </FormControl>
               <FormDescription className="body-regular text-light-500 mt-2.5">
-                Introduce the problem and expand on what you've put in the title.
+                Introduce the problem and expand on what you&apos;ve put in the title.
               </FormDescription>
               <FormMessage />
             </FormItem>

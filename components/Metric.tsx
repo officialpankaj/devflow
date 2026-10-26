@@ -22,7 +22,7 @@ const Metric = ({ imgUrl, alt, value, title, href, textStyles, imgStyles = "", i
         <span
           aria-hidden
           className={cn(
-            "flex size-4 shrink-0 items-center justify-center rounded-full bg-light-700 text-[10px] uppercase dark:bg-dark-400",
+            "bg-light-700 dark:bg-dark-400 flex size-4 shrink-0 items-center justify-center rounded-full text-[10px] uppercase",
             imgStyles
           )}
         >
