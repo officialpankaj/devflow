@@ -6,26 +6,40 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AskQuestionSchema } from "@/lib/validations";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React, { useRef } from "react";
+import React, { useRef, useTransition } from "react";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
 import { z } from "zod";
 import TagCard from "@/components/cards/TagCard";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
+import { toast } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
+import ROUTES from "@/constants/routes";
+import { RotateCw } from "lucide-react";
+import { IQuestion } from "@/types/global";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   // Make sure we turn SSR off
   ssr: false,
 });
 
-const QuestionForm = () => {
+interface Params {
+  question?: IQuestion;
+  isEdit?: boolean;
+}
+
+const QuestionForm = ({ question, isEdit = false }: Params) => {
+  const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null);
+
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      tags: [],
+      title: question?.title || "",
+      content: question?.content || "",
+      tags: question?.tags?.map((d) => d?.name) || [],
     },
   });
 
@@ -64,8 +78,44 @@ const QuestionForm = () => {
     }
   };
 
-  const handleCreateQuestion = (data: z.infer<typeof AskQuestionSchema>) => {
-    console.log(data);
+  const handleCreateQuestion = async (data: z.infer<typeof AskQuestionSchema>) => {
+    startTransition(async () => {
+      if (isEdit && question) {
+        const result = await editQuestion({ ...data, questionId: question?._id });
+
+        if (result.success) {
+          toast.add({
+            title: "Success",
+            description: "Question updated successfully",
+          });
+          if (result?.data) router.push(ROUTES.QUESTION_DETAIL(result?.data?._id?.toString()));
+        } else {
+          toast.add({
+            title: `Error ${result.status}`,
+            description: result.error?.message || "Something went wrong",
+            type: "destructive",
+          });
+        }
+
+        return;
+      }
+
+      const result = await createQuestion(data);
+
+      if (result.success) {
+        toast.add({
+          title: "Success",
+          description: "Question created successfully",
+        });
+        if (result?.data) router.push(ROUTES.QUESTION_DETAIL(result?.data?._id?.toString()));
+      } else {
+        toast.add({
+          title: `Error ${result.status}`,
+          description: result.error?.message || "Something went wrong",
+          type: "destructive",
+        });
+      }
+    });
   };
 
   return (
@@ -126,11 +176,11 @@ const QuestionForm = () => {
                   />
                   {field?.value?.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {field?.value?.map((tag) => (
+                      {field?.value?.map((tag, index) => (
                         <TagCard
                           _id={tag}
                           name={tag}
-                          key={tag}
+                          key={`${tag}${index}`}
                           remove
                           isButton={true}
                           compact={true}
@@ -150,8 +200,19 @@ const QuestionForm = () => {
         />
 
         <div className="mt-16 flex justify-end">
-          <Button type="submit" className="primary-gradient text-light-900! min-h-fit w-fit px-4 py-2">
-            Ask A Question
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="primary-gradient text-light-900! min-h-fit w-fit px-4 py-2"
+          >
+            {isPending ? (
+              <>
+                <RotateCw className="mr-2 size-4 animate-spin" />
+                <span>Submitting</span>
+              </>
+            ) : (
+              <>{isEdit ? "Edit" : "Ask A Question"}</>
+            )}
           </Button>
         </div>
       </form>

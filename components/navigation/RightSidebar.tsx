@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import TagCard from "@/components/cards/TagCard";
+import ROUTES from "@/constants/routes";
 
 const hotQuestions = [
   { _id: "1", title: "How to create a custom hook in React?" },
@@ -25,7 +26,7 @@ const RightSidebar = () => {
         <h3 className="h3-bold text-dark200_light900">Top Questions</h3>
         <div className="mt-7 flex w-full flex-col gap-7.5">
           {hotQuestions.map(({ _id, title }) => (
-            <Link href={`/question/${_id}`} key={_id} className="flex-between cursor-pointer">
+            <Link href={ROUTES.QUESTION_DETAIL(_id)} key={_id} className="flex-between cursor-pointer">
               <p className="body-medium text-dark500_light700">{title}</p>
 
               <Image src="/icons/chevron-right.svg" alt="Chevron" width={20} height={20} className="invert-colors" />
