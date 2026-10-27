@@ -43,3 +43,13 @@ export const getTimeStamp = (datetime: Date) => {
 
   return "just now";
 };
+
+export const formatNumber = (number: number) => {
+  if (number >= 100000) {
+    return (number / 100000).toFixed(1) + "M";
+  } else if (number >= 1000) {
+    return (number / 1000).toFixed(1) + "K";
+  } else {
+    return number.toString();
+  }
+};

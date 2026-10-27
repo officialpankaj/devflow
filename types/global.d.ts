@@ -15,7 +15,6 @@ export interface IQuestion {
   _id: string;
   title: string;
   content: string;
-  description: string;
   tags: ITag[];
   author: IAuthor;
   createdAt: Date;
