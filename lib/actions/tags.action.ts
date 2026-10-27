@@ -61,7 +61,7 @@ export async function getTags(
   }
 }
 
-export async function getTagQuestion(
+export async function getTagQuestions(
   params: GetTagQuestionsParams
 ): Promise<ActionResponse<{ tag: ITagDoc; questions: IQuestion[]; isNext: boolean }>> {
   const validationResult = await action({ params, schema: GetTagQuestionsSchema });
