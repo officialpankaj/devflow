@@ -1,4 +1,5 @@
 import { techMap } from "@/constants/techMap";
+import { techDescriptionMap } from "@/constants/techDescriptionMap";
 
 export { cn } from "cn";
 
@@ -7,6 +8,15 @@ export const getDevIconClassName = (techName: string) => {
 
   return techMap[normalizedName] ? `${techMap[normalizedName]} colored` : "devicon-devicon-plain";
 };
+
+export function getTechDescription(techName: string): string {
+  const normalizedTech = techName.replace(/[ .]/g, "").toLowerCase();
+
+  return (
+    techDescriptionMap[normalizedTech] ||
+    `${techName} is a technology or tool widely used in software development, providing valuable features and capabilities.`
+  );
+}
 
 export const getTimeStamp = (datetime: Date) => {
   const date = new Date(datetime);
