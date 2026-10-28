@@ -13,6 +13,7 @@ import Preview from "@/components/editor/Preview";
 import { after } from "next/server";
 import AnswerForm from "@/components/forms/AnswerForm";
 import { getAnswers } from "@/lib/actions/answer.action";
+import AllAnswers from "@/components/answers/AllAnswers";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -34,8 +35,6 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     data: answerResults,
     error: answersError,
   } = await getAnswers({ questionId: id, page: 1, pageSize: 10, filter: "latest" });
-
-  console.log("answerResults", answerResults);
 
   const { _id, author, createdAt, upvotes, answers, views, title, tags, content } = question || {};
 
@@ -95,6 +94,15 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           <TagCard key={tag._id} _id={tag._id} name={tag.name} compact />
         ))}
       </div>
+
+      <section className="my-5">
+        <AllAnswers
+          data={answerResults?.answers || []}
+          success={areAnswersLoaded}
+          error={answersError}
+          totalAnswers={answerResults?.totalAnswers || 0}
+        />
+      </section>
 
       <section className="my-5">
         <AnswerForm questionId={id} />
