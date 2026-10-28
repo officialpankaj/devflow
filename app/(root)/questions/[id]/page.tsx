@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteParams } from "@/types/global";
-import { getQuestion } from "@/lib/actions/question.action";
+import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import ROUTES from "@/constants/routes";
@@ -10,6 +10,8 @@ import Metric from "@/components/Metric";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
+import { after } from "next/server";
+import AnswerForm from "@/components/forms/AnswerForm";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -21,6 +23,10 @@ const QuestionDetails = async ({ params }: RouteParams) => {
   const { success, data: question, error } = await getQuestion({ questionId: id });
 
   if (!success || !question) return notFound();
+
+  after(async () => {
+    await incrementViews({ questionId: id });
+  });
 
   const { _id, author, createdAt, upvotes, answers, views, title, tags, content } = question || {};
 
@@ -82,6 +88,10 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           <TagCard key={tag._id} _id={tag._id} name={tag.name} compact />
         ))}
       </div>
+
+      <section className="my-5">
+        <AnswerForm />
+      </section>
     </>
   );
 };
