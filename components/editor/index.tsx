@@ -47,6 +47,7 @@ const Editor = ({ value, fieldChange, editorRef, ...props }: Props) => {
 
   return (
     <MDXEditor
+      {...props}
       key={resolvedTheme}
       markdown={value}
       ref={editorRef}
@@ -119,7 +120,6 @@ const Editor = ({ value, fieldChange, editorRef, ...props }: Props) => {
           ),
         }),
       ]}
-      {...props}
     />
   );
 };

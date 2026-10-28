@@ -1,7 +1,8 @@
-import {fetchHandler} from "@/lib/handlers/fetch";
-import {IUserDoc} from "@/database/user.model";
-import {IAccountDoc} from "@/database/account.model";
+import { fetchHandler } from "@/lib/handlers/fetch";
+import { IUserDoc } from "@/database/user.model";
+import { IAccountDoc } from "@/database/account.model";
 import ROUTES from "@/constants/routes";
+import { SignInWithOAuthParams } from "@/types/action";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
 
@@ -34,5 +35,13 @@ export const api = {
     update: (id: string, accountData: Partial<IAccountDoc>) =>
       fetchHandler(`${API_BASE_URL}/account/${id}`, { method: "PUT", body: JSON.stringify(accountData) }),
     delete: (id: string) => fetchHandler(`${API_BASE_URL}/account/${id}`, { method: "DELETE" }),
+  },
+  ai: {
+    getAnswer: (question: string, content: string, userAnswer?: string) =>
+      fetchHandler(`${API_BASE_URL}/ai/answers`, {
+        method: "POST",
+        body: JSON.stringify({ question, content, userAnswer }),
+        timeout: 100000,
+      }),
   },
 };

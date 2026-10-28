@@ -11,10 +11,12 @@
     "fix": "eslint . --fix && prettier --wraite"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^4.0.71",
     "@base-ui/react": "^1.9.0",
     "@hookform/resolvers": "^5.9.1",
     "@mdxeditor/editor": "^4.3.3",
     "@types/bcryptjs": "^3.0.0",
+    "ai": "^7.0.154",
     "bcryptjs": "^3.0.3",
     "bright": "^1.0.0",
     "class-variance-authority": "^0.7.1",
