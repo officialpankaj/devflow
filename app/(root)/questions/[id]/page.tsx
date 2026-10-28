@@ -12,6 +12,7 @@ import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
 import { after } from "next/server";
 import AnswerForm from "@/components/forms/AnswerForm";
+import { getAnswers } from "@/lib/actions/answer.action";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -27,6 +28,14 @@ const QuestionDetails = async ({ params }: RouteParams) => {
   after(async () => {
     await incrementViews({ questionId: id });
   });
+
+  const {
+    success: areAnswersLoaded,
+    data: answerResults,
+    error: answersError,
+  } = await getAnswers({ questionId: id, page: 1, pageSize: 10, filter: "latest" });
+
+  console.log("answerResults", answerResults);
 
   const { _id, author, createdAt, upvotes, answers, views, title, tags, content } = question || {};
 
@@ -79,9 +88,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
         />
       </div>
 
-      <p>
-        <Preview content={content} />
-      </p>
+      <Preview content={content} />
 
       <div className="mt-8 flex flex-wrap gap-2">
         {tags.map((tag) => (
