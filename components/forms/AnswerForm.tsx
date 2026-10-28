@@ -1,24 +1,26 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AnswerSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import dynamic from "next/dynamic";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { Button } from "@/components/ui/button";
 import { RotateCw } from "lucide-react";
 import Image from "next/image";
+import { createAnswer } from "@/lib/actions/answer.action";
+import { toast } from "@/components/ui/toast";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   // Make sure we turn SSR off
   ssr: false,
 });
 
-const AnswerForm = () => {
-  const [isSubmitting, setIsSubmitting] = useState();
+const AnswerForm = ({ questionId }: { questionId: string }) => {
+  const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState();
 
   const editorRef = useRef<MDXEditorMethods>(null);
@@ -29,7 +31,17 @@ const AnswerForm = () => {
   });
 
   const handleSubmit = async (values: z.infer<typeof AnswerSchema>) => {
-    console.log(values);
+    startAnsweringTransition(async () => {
+      const result = await createAnswer({ content: values.content, questionId });
+
+      if (result.success) {
+        form.reset();
+
+        toast.add({ title: "Success", description: "Your answer has been posted successfully" });
+      } else {
+        toast.add({ title: "Error", description: result?.error?.message, type: "destructive" });
+      }
+    });
   };
 
   return (
@@ -66,17 +78,18 @@ const AnswerForm = () => {
             control={form.control}
             name="content"
             render={({ field }) => (
-              <FormItem className="flex w-full flex-col gap-3">
-                <FormControl className="mt-3.5">
+              <FormItem className="mt-3.5 flex w-full flex-col gap-3">
+                <FormControl>
                   <Editor value={field.value} fieldChange={field.onChange} editorRef={editorRef} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
 
           <div className="flex justify-end">
-            <Button className="primary-gradient w-fit">
-              {isSubmitting ? (
+            <Button type="submit" className="primary-gradient mt-3 w-fit">
+              {isAnswering ? (
                 <>
                   <RotateCw className="mr-2 size-4 animate-spin" />
                   Posting...

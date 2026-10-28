@@ -55,3 +55,10 @@ interface PaginateSearchParams {
 interface IncrementViewsParams {
   questionId: string;
 }
+
+interface IAnswer {
+  _id: string;
+  author: IAuthor;
+  content: string;
+  createdAt: Date;
+}
