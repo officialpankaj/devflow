@@ -19,6 +19,7 @@ export interface IQuestion {
   author: IAuthor;
   createdAt: Date;
   upvotes: number;
+  downvotes: number;
   answers: number;
   views: number;
 }
