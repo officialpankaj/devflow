@@ -2,15 +2,21 @@ import handleError from "@/lib/handlers/error";
 import { ErrorResponse } from "@/types/global";
 import { AIAnswerSchema } from "@/lib/validations";
 import { z } from "zod";
-import { ValidationError } from "@/lib/http-errors";
+import { UnauthorizedError, ValidationError } from "@/lib/http-errors";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
 import { groq } from "@ai-sdk/groq";
+import { auth } from "@/auth";
 
 export async function POST(request: Request) {
   const { question, content, userAnswer } = await request.json();
 
+  const session = await auth();
+
   try {
+    if (!session?.user?.id) {
+      throw new UnauthorizedError();
+    }
     const validatedData = AIAnswerSchema.safeParse({ question, content, userAnswer });
 
     if (!validatedData.success) {
