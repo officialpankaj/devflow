@@ -9,6 +9,8 @@ import mongoose, { ClientSession } from "mongoose";
 import { NotFoundError, UnauthorizedError } from "@/lib/http-errors";
 import { Answer, Question } from "@/database";
 import Vote from "@/database/vote.model";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
 export async function updateVoteCount(params: UpdateVoteCountParams, session: ClientSession): Promise<ActionResponse> {
   const validationResult = await action({ params, schema: UpdateVoteCountSchema, authorize: true });
@@ -85,6 +87,8 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
     }
 
     await session.commitTransaction();
+
+    revalidatePath(ROUTES.QUESTION_DETAIL(targetId));
 
     return { success: true };
   } catch (error) {
