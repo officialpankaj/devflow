@@ -62,4 +62,6 @@ interface IAnswer {
   author: IAuthor;
   content: string;
   createdAt: Date;
+  upvotes: number;
+  downvotes: number;
 }
