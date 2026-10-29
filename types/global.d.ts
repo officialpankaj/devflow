@@ -65,3 +65,15 @@ interface IAnswer {
   upvotes: number;
   downvotes: number;
 }
+
+interface IUser {
+  _id: string;
+  name: string;
+  username: string;
+  email: string;
+  bio?: string;
+  image?: string;
+  location?: string;
+  portfolio?: string;
+  reputation?: number;
+}
