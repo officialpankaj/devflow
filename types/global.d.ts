@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Author } from "next/dist/lib/metadata/types/metadata-types";
 
 export interface ITag {
   _id: string;
@@ -76,4 +77,10 @@ interface IUser {
   location?: string;
   portfolio?: string;
   reputation?: number;
+}
+
+interface ICollection {
+  _id: string;
+  author: string | Author;
+  question: IQuestion;
 }
