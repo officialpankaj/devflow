@@ -132,7 +132,7 @@ export async function getSavedQuestions(
       });
     }
 
-    const [totalCount] = await Collection.aggregate([...pipeline, { $count: "count" }]);
+    const [{ count: totalCount = 0 } = {}] = await Collection.aggregate([...pipeline, { $count: "count" }]);
 
     pipeline.push({ $sort: sortCriteria }, { $skip: skip }, { $limit: limit });
     pipeline.push({ $project: { question: 1, author: 1 } });

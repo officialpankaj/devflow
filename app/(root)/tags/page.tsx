@@ -7,6 +7,7 @@ import { EMPTY_TAGS } from "@/constants/states";
 import TagCard from "@/components/cards/TagCard";
 import CommonFilter from "@/components/filters/CommonFilter";
 import { TagFilters } from "@/constants/filter";
+import Pagination from "@/components/Pagination";
 
 const Tags = async ({ searchParams }: RouteParams) => {
   const { page, pageSize, filter, query } = await searchParams;
@@ -18,7 +19,7 @@ const Tags = async ({ searchParams }: RouteParams) => {
     filter,
   });
 
-  const { tags } = data || {};
+  const { tags, isNext } = data || {};
 
   return (
     <>
@@ -47,6 +48,8 @@ const Tags = async ({ searchParams }: RouteParams) => {
           </div>
         )}
       />
+
+      <Pagination page={page} isNext={!!isNext} />
     </>
   );
 };

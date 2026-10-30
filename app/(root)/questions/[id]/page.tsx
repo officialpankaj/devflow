@@ -126,6 +126,8 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
           success={areAnswersLoaded}
           error={answersError}
           totalAnswers={answerResults?.totalAnswers || 0}
+          page={Number(page) || 1}
+          isNext={!!answerResults?.isNext}
         />
       </section>
 
