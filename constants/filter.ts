@@ -26,6 +26,12 @@ export const TagFilters = [
   { name: "Popular", value: "popular" },
 ];
 
+export const TagQuestionFilters = [
+  { name: "Newest", value: "newest" },
+  { name: "Popular", value: "popular" },
+  { name: "Unanswered", value: "unanswered" },
+];
+
 export const UserFilters = [
   { name: "Newest", value: "newest" },
   { name: "Oldest", value: "oldest" },
