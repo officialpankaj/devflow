@@ -2,14 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import TagCard from "@/components/cards/TagCard";
 import ROUTES from "@/constants/routes";
-
-const hotQuestions = [
-  { _id: "1", title: "How to create a custom hook in React?" },
-  { _id: "2", title: "How to use React Query?" },
-  { _id: "3", title: "How to use Redux?" },
-  { _id: "4", title: "How to use React Router?" },
-  { _id: "5", title: "How to use React Context?" },
-];
+import { getTopQuestion } from "@/lib/actions/question.action";
+import DataRenderer from "@/components/DataRenderer";
+import { EMPTY_HOT_QUESTIONS } from "@/constants/states";
 
 const popularTags = [
   { _id: "1", name: "react", question: 100 },
@@ -19,20 +14,37 @@ const popularTags = [
   { _id: "5", name: "react-query", question: 75 },
 ];
 
-const RightSidebar = () => {
+const RightSidebar = async () => {
+  const { success, data: hotQuestions, error } = await getTopQuestion();
+
   return (
     <section className="custom-scrollbar background-light900_dark200 light-border shadow-light-300 sticky top-0 right-0 flex h-screen w-87.5 flex-col gap-6 overflow-y-auto border-l p-6 pt-36 max-xl:hidden dark:shadow-none">
       <div>
         <h3 className="h3-bold text-dark200_light900">Top Questions</h3>
-        <div className="mt-7 flex w-full flex-col gap-7.5">
-          {hotQuestions.map(({ _id, title }) => (
-            <Link href={ROUTES.QUESTION_DETAIL(_id)} key={_id} className="flex-between cursor-pointer">
-              <p className="body-medium text-dark500_light700">{title}</p>
 
-              <Image src="/icons/chevron-right.svg" alt="Chevron" width={20} height={20} className="invert-colors" />
-            </Link>
-          ))}
-        </div>
+        <DataRenderer
+          success={success}
+          error={error}
+          data={hotQuestions}
+          empty={EMPTY_HOT_QUESTIONS}
+          render={(hotQuestions) => (
+            <div className="mt-7 flex w-full flex-col gap-7.5">
+              {hotQuestions?.map(({ _id, title }) => (
+                <Link href={ROUTES.QUESTION_DETAIL(_id)} key={_id} className="flex-between cursor-pointer">
+                  <p className="body-medium text-dark500_light700 line-clamp-2">{title}</p>
+
+                  <Image
+                    src="/icons/chevron-right.svg"
+                    alt="Chevron"
+                    width={20}
+                    height={20}
+                    className="invert-colors"
+                  />
+                </Link>
+              ))}
+            </div>
+          )}
+        />
       </div>
 
       <div className="mt-16">

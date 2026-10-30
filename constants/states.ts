@@ -51,3 +51,8 @@ export const EMPTY_USERS = {
   title: "No Users found",
   message: "You're ALONE. The only one here. More users are coming soon!",
 };
+
+export const EMPTY_HOT_QUESTIONS = {
+  title: "No questions found",
+  message: "No questions have been asked yet.",
+};
