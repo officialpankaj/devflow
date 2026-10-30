@@ -4,18 +4,12 @@ import TagCard from "@/components/cards/TagCard";
 import ROUTES from "@/constants/routes";
 import { getTopQuestion } from "@/lib/actions/question.action";
 import DataRenderer from "@/components/DataRenderer";
-import { EMPTY_HOT_QUESTIONS } from "@/constants/states";
-
-const popularTags = [
-  { _id: "1", name: "react", question: 100 },
-  { _id: "2", name: "javascript", question: 200 },
-  { _id: "3", name: "typescript", question: 150 },
-  { _id: "4", name: "nextjs", question: 50 },
-  { _id: "5", name: "react-query", question: 75 },
-];
+import { EMPTY_TOP_QUESTIONS, EMPTY_TOP_TAGS } from "@/constants/states";
+import { getTopTags } from "@/lib/actions/tags.action";
 
 const RightSidebar = async () => {
-  const { success, data: hotQuestions, error } = await getTopQuestion();
+  const { success: topQuestionsSuccess, data: topQuestions, error: topQuestionError } = await getTopQuestion();
+  const { success: topTagsSuccess, data: topTags, error: topTagsError } = await getTopTags();
 
   return (
     <section className="custom-scrollbar background-light900_dark200 light-border shadow-light-300 sticky top-0 right-0 flex h-screen w-87.5 flex-col gap-6 overflow-y-auto border-l p-6 pt-36 max-xl:hidden dark:shadow-none">
@@ -23,13 +17,13 @@ const RightSidebar = async () => {
         <h3 className="h3-bold text-dark200_light900">Top Questions</h3>
 
         <DataRenderer
-          success={success}
-          error={error}
-          data={hotQuestions}
-          empty={EMPTY_HOT_QUESTIONS}
-          render={(hotQuestions) => (
+          success={topQuestionsSuccess}
+          error={topQuestionError}
+          data={topQuestions}
+          empty={EMPTY_TOP_QUESTIONS}
+          render={(topQuestions) => (
             <div className="mt-7 flex w-full flex-col gap-7.5">
-              {hotQuestions?.map(({ _id, title }) => (
+              {topQuestions?.map(({ _id, title }) => (
                 <Link href={ROUTES.QUESTION_DETAIL(_id)} key={_id} className="flex-between cursor-pointer">
                   <p className="body-medium text-dark500_light700 line-clamp-2">{title}</p>
 
@@ -50,11 +44,26 @@ const RightSidebar = async () => {
       <div className="mt-16">
         <h3 className="h3-bold text-dark300_light700">Popular Tags</h3>
 
-        <div className="mt-7 flex flex-col gap-4">
-          {popularTags.map(({ _id, name, question }) => (
-            <TagCard key={_id} _id={_id} name={name} questions={question} showCount={true} compact={true} />
-          ))}
-        </div>
+        <DataRenderer
+          success={topTagsSuccess}
+          data={topTags}
+          error={topTagsError}
+          empty={EMPTY_TOP_TAGS}
+          render={(topTags) => (
+            <div className="mt-7 flex flex-col gap-4">
+              {topTags?.map(({ _id, name, questions }) => (
+                <TagCard
+                  key={_id?.toString()}
+                  _id={_id?.toString()}
+                  name={name}
+                  questions={questions}
+                  showCount={true}
+                  compact={true}
+                />
+              ))}
+            </div>
+          )}
+        />
       </div>
     </section>
   );

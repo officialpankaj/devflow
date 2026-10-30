@@ -1,4 +1,4 @@
-import { ActionResponse, ErrorResponse, IQuestion, PaginateSearchParams } from "@/types/global";
+import { ActionResponse, ErrorResponse, IQuestion, ITag, PaginateSearchParams } from "@/types/global";
 import action from "@/lib/handlers/action";
 import { GetTagQuestionsSchema, PaginatedSearchParamsSchema } from "@/lib/validations";
 import handleError from "@/lib/handlers/error";
@@ -124,6 +124,16 @@ export async function getTagQuestions(
       success: true,
       data: { tag: JSON.parse(JSON.stringify(tag)), questions: JSON.parse(JSON.stringify(questions)), isNext },
     };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getTopTags(): Promise<ActionResponse<ITag[]>> {
+  try {
+    const tags = await Tag.find().sort({ question: -1 }).limit(5);
+
+    return { success: true, data: JSON.parse(JSON.stringify(tags)) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
