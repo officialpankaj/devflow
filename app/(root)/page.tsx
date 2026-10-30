@@ -8,6 +8,8 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import { getQuestions } from "@/lib/actions/question.action";
 import DataRenderer from "@/components/DataRenderer";
 import { EMPTY_QUESTION } from "@/constants/states";
+import CommonFilter from "@/components/filters/CommonFilter";
+import { HomePageFilters } from "@/constants/filter";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -42,6 +44,12 @@ const Home = async ({ searchParams }: SearchParams) => {
           imgSrc="/icons/search.svg"
           placeholder="Search questions..."
           otherClasses="flex-1"
+        />
+
+        <CommonFilter
+          filters={HomePageFilters}
+          otherClasses="min-h-[56x] sm:min-w-[170px]"
+          containerClasses="hidden flex-1 w-full max-md:flex"
         />
       </section>
       <HomeFilter />
