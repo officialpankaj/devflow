@@ -333,7 +333,7 @@
 }
 
 @utility tab {
-  @apply dark:bg-dark-400! bg-light-800! text-light-500! dark:data-[state=active]:bg-dark-300! data-[state=active]:bg-primary-100! data-[state=active]:text-primary-500! min-h-full!;
+  @apply dark:bg-dark-400 bg-light-800 text-light-500 dark:data-active:bg-dark-300 data-active:bg-primary-100 data-active:text-primary-500 min-h-full;
 }
 
 @layer base {

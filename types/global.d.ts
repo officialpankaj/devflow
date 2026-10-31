@@ -78,10 +78,17 @@ interface IUser {
   location?: string;
   portfolio?: string;
   reputation?: number;
+  createdAt: Date;
 }
 
 interface ICollection {
   _id: string;
   author: string | Author;
   question: IQuestion;
+}
+
+interface BadgeCounts {
+  GOLD: number;
+  SOLVER: number;
+  BRONZE: number;
 }
