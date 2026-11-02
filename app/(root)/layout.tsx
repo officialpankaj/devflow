@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Navbar from "@/components/navigation/navbar";
 import LeftSidebar from "@/components/navigation/LeftSidebar";
 import RightSidebar from "@/components/navigation/RightSidebar";
@@ -14,7 +14,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="mx-auto w-full max-w-5xl">{children}</div>
         </section>
 
-        <RightSidebar />
+        <Suspense fallback={<div className="w-87.5 max-xl:hidden" />}>
+          <RightSidebar />
+        </Suspense>
       </div>
     </main>
   );

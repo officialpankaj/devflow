@@ -47,7 +47,6 @@ const LeftSidebar = async () => {
             </Button>
             <Button className="small-medium light-border-2 btn-tertiary text-dark400_light900 min-h-10.25 w-full rounded-lg border px-4 py-3 shadow-none">
               <Link href={ROUTES.SIGN_UP}>
-                {" "}
                 <Image
                   src="/icons/sign-up.svg"
                   alt="Account"
