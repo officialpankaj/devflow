@@ -1,14 +1,14 @@
 "use server";
 
-import { CreateAnswerParams, GetAnswersParams } from "@/types/action";
+import { CreateAnswerParams, DeleteUserAnswerParams, GetAnswersParams } from "@/types/action";
 import { ActionResponse, ErrorResponse, IAnswer } from "@/types/global";
 import Answer, { IAnswerDoc } from "@/database/answer.model";
 import action from "@/lib/handlers/action";
-import { AnswerServerSchema, GetAnswersSchema } from "@/lib/validations";
+import { AnswerServerSchema, DeleteUserAnswerSchema, GetAnswersSchema } from "@/lib/validations";
 import handleError from "@/lib/handlers/error";
 import mongoose from "mongoose";
-import { Question } from "@/database";
-import { NotFoundError } from "@/lib/http-errors";
+import { Interaction, Question, Vote } from "@/database";
+import { ForbiddenError, NotFoundError } from "@/lib/http-errors";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
 
@@ -108,5 +108,43 @@ export async function getAnswers(
     return { success: true, data: { answers: JSON.parse(JSON.stringify(answers)), totalAnswers, isNext } };
   } catch (error) {
     return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function deleteUserAnswer(params: DeleteUserAnswerParams): Promise<ActionResponse> {
+  const validationResult = await action({ params, schema: DeleteUserAnswerSchema, authorize: true });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { answerId } = validationResult.params!;
+  const userId = validationResult?.session?.user?.id;
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const answer: IAnswerDoc = await Answer.findById(answerId).session(session);
+
+    if (!answer) throw new NotFoundError("Answer");
+    if (answer.author?.toString() !== userId) throw new ForbiddenError();
+
+    await Question.updateOne({ _id: answer.question }, { $inc: { answers: -1 } }, { session });
+    await Vote.deleteMany({ actionType: "answer", actionId: answerId }, { session });
+    await Interaction.deleteMany({ actionType: "answer", actionId: answerId }, { session });
+    await Answer.deleteOne({ _id: answerId }, { session });
+
+    await session.commitTransaction();
+
+    revalidatePath(ROUTES.PROFILE_DETAIL(userId));
+    revalidatePath(ROUTES.QUESTION_DETAIL(answer.question?.toString()));
+
+    return { success: true };
+  } catch (error) {
+    await session.abortTransaction();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
 }
