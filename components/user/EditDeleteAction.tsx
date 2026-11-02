@@ -15,6 +15,7 @@ import { toast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
+import { deleteUserQuestion } from "@/lib/actions/question.action";
 
 interface Props {
   type: string;
@@ -31,6 +32,16 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
   const handleDelete = async () => {
     if (type === "question") {
       // Server Action call to delete question
+
+      const response = await deleteUserQuestion({ questionId: itemId });
+
+      if (!response?.success) {
+        toast.add({
+          title: "Failed to delete",
+          description: response?.error?.message || "An error occured while deleting the question",
+          type: "destructive",
+        });
+      }
 
       toast.add({ title: "Question deleted", description: "Your question has been deleted successfully." });
     } else if (type === "answer") {

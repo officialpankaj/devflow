@@ -4,6 +4,7 @@ import { ActionResponse, ErrorResponse, IncrementViewsParams, IQuestion, Paginat
 import action from "@/lib/handlers/action";
 import {
   AskQuestionSchema,
+  DeleteUserQuestionSchema,
   EditQuestionSchema,
   GetQuestionSchema,
   IncrementViewSchema,
@@ -14,8 +15,11 @@ import mongoose, { QueryFilter } from "mongoose";
 import Question, { IQuestionDoc } from "@/database/question.model";
 import Tag, { ITagDoc } from "@/database/tag.model";
 import TagQuestion from "@/database/tag-question.model";
-import { NotFoundError, UnauthorizedError } from "@/lib/http-errors";
-import { CreateQuestionParams, EditQuestionParams, GetQuestionParams } from "@/types/action";
+import { ForbiddenError, NotFoundError } from "@/lib/http-errors";
+import { CreateQuestionParams, DeleteUserQuestionParams, EditQuestionParams, GetQuestionParams } from "@/types/action";
+import { Answer, Collection, Interaction, Vote } from "@/database";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
 export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse<IQuestionDoc>> {
   const validationResult = await action({ params, schema: AskQuestionSchema, authorize: true });
@@ -101,7 +105,7 @@ export async function editQuestion(params: EditQuestionParams): Promise<ActionRe
     }
 
     if (question.author.toString() !== userId) {
-      throw new UnauthorizedError();
+      throw new ForbiddenError();
     }
 
     if (question.title !== title || question.content !== content) {
@@ -289,5 +293,84 @@ export async function getTopQuestion(): Promise<ActionResponse<IQuestion[]>> {
     return { success: true, data: JSON.parse(JSON.stringify(questions)) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function deleteUserQuestion(params: DeleteUserQuestionParams): Promise<ActionResponse> {
+  const validationResult = await action({ params, schema: DeleteUserQuestionSchema, authorize: true });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { questionId } = validationResult.params!;
+  const userId = validationResult?.session?.user?.id!;
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const question = await Question.findById(questionId).session(session);
+
+    if (!question) {
+      throw new NotFoundError("Question");
+    }
+
+    if (question.author?.toString() !== userId) {
+      throw new ForbiddenError();
+    }
+
+    const answerIds = await Answer.find({ question: questionId }).session(session);
+
+    await Collection.deleteMany({ question: questionId }, { session });
+    await TagQuestion.deleteMany({ question: questionId }, { session });
+    await Tag.updateMany({ _id: { $in: question.tags } }, { $inc: { questions: -1 } }, { session });
+    await Vote.deleteMany(
+      {
+        $or: [
+          {
+            actionType: "question",
+            actionId: questionId,
+          },
+          {
+            actionType: "answer",
+            actionId: {
+              $in: answerIds,
+            },
+          },
+        ],
+      },
+      { session }
+    );
+    await Interaction.deleteMany(
+      {
+        $or: [
+          {
+            actionType: "question",
+            actionId: questionId,
+          },
+          {
+            actionType: "answer",
+            actionId: {
+              $in: answerIds,
+            },
+          },
+        ],
+      },
+      { session }
+    );
+    await Answer.deleteMany({ _id: { $in: answerIds } }, { session });
+    await Question.deleteOne({ _id: questionId }, { session });
+
+    await session.commitTransaction();
+
+    revalidatePath(ROUTES.PROFILE_DETAIL(userId));
+
+    return { success: true };
+  } catch (error) {
+    await session.abortTransaction();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
 }
