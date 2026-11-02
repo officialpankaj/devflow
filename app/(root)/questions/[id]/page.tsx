@@ -23,7 +23,7 @@ import { Metadata } from "next";
 export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
   const { id } = await params;
 
-  const { success, data: question, error } = await getQuestion({ questionId: id });
+  const { success, data: question } = await getQuestion({ questionId: id });
 
   if (!success) {
     return {

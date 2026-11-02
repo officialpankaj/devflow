@@ -20,6 +20,7 @@ import { CreateQuestionParams, DeleteUserQuestionParams, EditQuestionParams, Get
 import { Answer, Collection, Interaction, Vote } from "@/database";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
+import { cache } from "react";
 
 export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse<IQuestionDoc>> {
   const validationResult = await action({ params, schema: AskQuestionSchema, authorize: true });
@@ -175,7 +176,7 @@ export async function editQuestion(params: EditQuestionParams): Promise<ActionRe
   }
 }
 
-export async function getQuestion(params: GetQuestionParams): Promise<ActionResponse<IQuestion>> {
+export const getQuestion = cache(async function (params: GetQuestionParams): Promise<ActionResponse<IQuestion>> {
   const validationResult = await action({ params, schema: GetQuestionSchema, authorize: true });
 
   if (validationResult instanceof Error) return handleError(validationResult) as ErrorResponse;
@@ -193,7 +194,7 @@ export async function getQuestion(params: GetQuestionParams): Promise<ActionResp
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-}
+});
 
 export async function getQuestions(
   params: PaginateSearchParams
