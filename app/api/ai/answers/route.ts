@@ -1,5 +1,5 @@
 import handleError from "@/lib/handlers/error";
-import { ErrorResponse } from "@/types/global";
+import { APIErrorResponse } from "@/types/global";
 import { AIAnswerSchema } from "@/lib/validations";
 import { z } from "zod";
 import { UnauthorizedError, ValidationError } from "@/lib/http-errors";
@@ -41,6 +41,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data: text }, { status: 200 });
   } catch (error) {
-    return handleError(error, "api") as ErrorResponse;
+    return handleError(error, "api") as APIErrorResponse;
   }
 }

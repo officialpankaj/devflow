@@ -6,8 +6,12 @@ import { getTopQuestion } from "@/lib/actions/question.action";
 import DataRenderer from "@/components/DataRenderer";
 import { EMPTY_TOP_QUESTIONS, EMPTY_TOP_TAGS } from "@/constants/states";
 import { getTopTags } from "@/lib/actions/tags.action";
+import { connection } from "next/server";
 
 const RightSidebar = async () => {
+  // Mongoose calls Date.now(); render at request time so Prerender doesn't fail
+  await connection();
+
   const [
     { success: topQuestionsSuccess, data: topQuestions, error: topQuestionError },
     { success: topTagsSuccess, data: topTags, error: topTagsError },
