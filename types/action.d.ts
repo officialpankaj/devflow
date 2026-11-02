@@ -1,5 +1,7 @@
 import { PaginatedSearchParamsSchema } from "@/lib/validations";
 import { PaginateSearchParams } from "@/types/global";
+import { IInteractionDoc } from "@/database/interaction.model";
+import mongoose from "mongoose";
 
 interface SignInWithOAuthParams {
   provider: "github" | "google";
@@ -88,4 +90,18 @@ interface DeleteUserQuestionParams {
 
 interface DeleteUserAnswerParams {
   answerId: string;
+}
+
+interface CreateInteractionParams {
+  action: "view" | "upvote" | "downvote" | "bookmark" | "post" | "edit" | "delete" | "search";
+  actionId: string;
+  authorId: string;
+  actionTarget: "question" | "answer";
+}
+
+interface UpdateReputationParams {
+  interaction: IInteractionDoc;
+  session: mongoose.ClientSession;
+  performerId: string;
+  authorId: string;
 }
