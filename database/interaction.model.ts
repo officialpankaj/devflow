@@ -1,22 +1,13 @@
 import { Document, model, models, Schema, Types } from "mongoose";
 
+import { InteractionActionEnums } from "@/lib/validations";
+
 interface IInteraction {
   user: Types.ObjectId;
   action: string;
   actionId: Types.ObjectId;
   actionType: "question" | "answer";
 }
-
-export const InteractionActionEnums = [
-  "view",
-  "upvote",
-  "downvote",
-  "bookmark",
-  "post",
-  "edit",
-  "delete",
-  "search",
-] as const;
 
 export interface IInteractionDoc extends IInteraction, Document {}
 

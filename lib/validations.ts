@@ -1,5 +1,16 @@
 import { z } from "zod";
-import { InteractionActionEnums } from "@/database/interaction.model";
+
+// Lives here (not in interaction.model) so client components importing validations don't bundle mongoose.
+export const InteractionActionEnums = [
+  "view",
+  "upvote",
+  "downvote",
+  "bookmark",
+  "post",
+  "edit",
+  "delete",
+  "search",
+] as const;
 
 export const SignInSchema = z.object({
   email: z.email({ message: "Please provide a valid email address." }).min(1, "Email is required."),

@@ -21,6 +21,8 @@ import { Answer, Collection, Interaction, Vote } from "@/database";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
 import { cache } from "react";
+import { after } from "next/server";
+import { createInteraction } from "@/lib/actions/interaction.action";
 
 export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse<IQuestionDoc>> {
   const validationResult = await action({ params, schema: AskQuestionSchema, authorize: true });
@@ -68,6 +70,16 @@ export async function createQuestion(params: CreateQuestionParams): Promise<Acti
       },
       { session }
     );
+
+    // log the interaction
+    after(async () => {
+      await createInteraction({
+        authorId: userId as string,
+        action: "post",
+        actionId: question._id.toString(),
+        actionTarget: "question",
+      });
+    });
 
     await session.commitTransaction();
 

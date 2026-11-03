@@ -11,6 +11,8 @@ import { Answer, Question } from "@/database";
 import Vote from "@/database/vote.model";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
+import { after } from "next/server";
+import { createInteraction } from "@/lib/actions/interaction.action";
 
 export async function updateVoteCount(params: UpdateVoteCountParams, session: ClientSession): Promise<ActionResponse> {
   const validationResult = await action({ params, schema: UpdateVoteCountSchema, authorize: true });
@@ -59,6 +61,13 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
   try {
     if (!userId) throw new UnauthorizedError();
 
+    const Model = targetType === "question" ? Question : Answer;
+
+    const contentDoc = await Model.findById(targetId).session(session);
+    if (!contentDoc) throw new NotFoundError("Content");
+
+    const contentAuthorId = contentDoc.author.toString();
+
     const existingVote = await Vote.findOne({
       author: userId,
       actionId: targetId,
@@ -85,6 +94,16 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
       const res = await updateVoteCount({ targetId, targetType, voteType, change: 1 }, session);
       if (!res.success) throw new Error(res.error?.message);
     }
+
+    // log the interaction
+    after(async () => {
+      await createInteraction({
+        authorId: contentAuthorId,
+        action: voteType,
+        actionId: targetId,
+        actionTarget: targetType,
+      });
+    });
 
     await session.commitTransaction();
 
