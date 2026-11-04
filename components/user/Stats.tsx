@@ -1,16 +1,11 @@
 import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
-
-interface BadgeCounts {
-  GOLD: number;
-  SILVER: number;
-  BRONZE: number;
-}
+import { Badges } from "@/types/global";
 
 interface Props {
   totalAnswers: number;
   totalQuestions: number;
-  badges: BadgeCounts;
+  badges: Badges;
   reputationPoints: number;
 }
 

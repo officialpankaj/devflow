@@ -90,6 +90,6 @@ interface ICollection {
 
 interface Badges {
   GOLD: number;
-  SOLVER: number;
+  SILVER: number;
   BRONZE: number;
 }
