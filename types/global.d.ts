@@ -88,7 +88,7 @@ interface ICollection {
   question: IQuestion;
 }
 
-interface BadgeCounts {
+interface Badges {
   GOLD: number;
   SOLVER: number;
   BRONZE: number;
