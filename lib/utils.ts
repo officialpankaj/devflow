@@ -64,7 +64,7 @@ export const assignBadges = (params: {
 }) => {
   const badgeCounts: Badges = {
     GOLD: 0,
-    SOLVER: 0,
+    SILVER: 0,
     BRONZE: 0,
   };
 
