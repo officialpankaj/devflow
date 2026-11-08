@@ -12,6 +12,7 @@ import {
 } from "@/types/global";
 import action from "@/lib/handlers/action";
 import {
+  EditProfileServerSchema,
   GetUserAnswersSchema,
   GetUserQuestionsSchema,
   GetUserSchema,
@@ -20,17 +21,21 @@ import {
   PaginatedSearchParamsSchema,
 } from "@/lib/validations";
 import handleError from "@/lib/handlers/error";
-import { PipelineStage, QueryFilter, Types } from "mongoose";
+import mongoose, { PipelineStage, QueryFilter, Types } from "mongoose";
 import { Answer, Question, User } from "@/database";
 import {
+  EditProfileParams,
   GetUserAnswersParams,
   GetUserParams,
   GetUserQuestionParams,
   GetUserStatsParams,
   GetUserTagsParams,
 } from "@/types/action";
-import { NotFoundError } from "@/lib/http-errors";
+import { NotFoundError, UnauthorizedError } from "@/lib/http-errors";
 import { assignBadges } from "@/lib/utils";
+import { IUserDoc } from "@/database/user.model";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
 export async function getUsers(
   params: PaginateSearchParams
@@ -269,5 +274,61 @@ export async function getUserTopTags(params: GetUserTagsParams): Promise<ActionR
     return { success: true, data: { tags: JSON.parse(JSON.stringify(tags)) } };
   } catch (error) {
     return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function editProfile(params: EditProfileParams): Promise<ActionResponse<IUserDoc>> {
+  const validationResult = await action({
+    params,
+    schema: EditProfileServerSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { userId, name, username, portfolio, bio, location } = validationResult.params!;
+  const loggedInUserId = validationResult?.session?.user?.id;
+
+  if (loggedInUserId !== userId) {
+    throw new UnauthorizedError();
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const user = await User.findById(userId).session(session);
+
+    if (!user) {
+      throw new NotFoundError("User");
+    }
+
+    if (
+      user.name !== name ||
+      user.username !== username ||
+      user.portfolio !== portfolio ||
+      user.bio !== bio ||
+      user.location !== location
+    ) {
+      user.name = name;
+      user.username = username;
+      user.portfolio = portfolio;
+      user.bio = bio;
+      user.location = location;
+      await user.save({ session });
+    }
+
+    await session.commitTransaction();
+
+    revalidatePath(ROUTES.PROFILE_DETAIL(userId));
+
+    return { success: true, data: JSON.parse(JSON.stringify(user)) };
+  } catch (error) {
+    await session.abortTransaction();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
 }

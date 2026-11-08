@@ -183,3 +183,15 @@ export const CreateInteractionSchema = z.object({
   actionId: z.string().min(1, { message: "Action ID is required" }),
   authorId: z.string().min(1, { message: "Author ID is required" }),
 });
+
+export const EditProfileSchema = z.object({
+  name: z.string().min(1, { message: "Name is required." }),
+  username: z.string().min(3, { message: "Username must be at least 3 characters long." }),
+  bio: z.string().optional(),
+  location: z.string().optional(),
+  portfolio: z.url({ message: "Please provide a valid URL." }).optional(),
+});
+
+export const EditProfileServerSchema = EditProfileSchema.extend({
+  userId: z.string().min(1, { message: "User ID is required" }),
+});

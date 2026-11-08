@@ -21,7 +21,7 @@ import {
   DeleteUserQuestionParams,
   EditQuestionParams,
   GetQuestionParams,
-  RecommedationParams,
+  RecommendationParams,
 } from "@/types/action";
 import { Answer, Collection, Interaction, Vote } from "@/database";
 import { revalidatePath } from "next/cache";
@@ -215,7 +215,7 @@ export const getQuestion = cache(async function (params: GetQuestionParams): Pro
   }
 });
 
-export async function getRecommendedQuestions({ userId, query, skip, limit }: RecommedationParams) {
+export async function getRecommendedQuestions({ userId, query, skip, limit }: RecommendationParams) {
   const interactions = await Interaction.find({
     user: new Types.ObjectId(userId),
     actionType: "question",

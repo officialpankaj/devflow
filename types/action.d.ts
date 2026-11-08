@@ -110,9 +110,18 @@ interface UpdateReputationParams {
   authorId: string;
 }
 
-interface RecommedationParams {
+interface RecommendationParams {
   userId: string;
   query?: string;
   skip: number;
   limit: number;
+}
+
+interface EditProfileParams {
+  userId: string;
+  name: string;
+  username: string;
+  portfolio?: string;
+  location?: string;
+  bio?: string;
 }

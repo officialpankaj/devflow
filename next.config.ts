@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["pino", "pino-pretty"],
   experimental: {
     agentFeedback: true,
+    authInterrupts: true,
   },
   cacheComponents: true,
   partialPrefetching: true,
