@@ -195,3 +195,8 @@ export const EditProfileSchema = z.object({
 export const EditProfileServerSchema = EditProfileSchema.extend({
   userId: z.string().min(1, { message: "User ID is required" }),
 });
+
+export const GlobalSearchSchema = z.object({
+  query: z.string(),
+  type: z.string().nullable().optional(),
+});

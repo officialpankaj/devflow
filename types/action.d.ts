@@ -125,3 +125,8 @@ interface EditProfileParams {
   location?: string;
   bio?: string;
 }
+
+interface GlobalSearchParams {
+  query: string;
+  type: string | null;
+}
