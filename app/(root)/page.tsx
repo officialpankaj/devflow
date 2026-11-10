@@ -10,7 +10,6 @@ import DataRenderer from "@/components/DataRenderer";
 import { EMPTY_QUESTION } from "@/constants/states";
 import CommonFilter from "@/components/filters/CommonFilter";
 import { HomePageFilters } from "@/constants/filter";
-import Pagination from "@/components/Pagination";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -60,6 +59,9 @@ const Home = async ({ searchParams }: SearchParams) => {
         data={questions}
         empty={EMPTY_QUESTION}
         error={error}
+        showPagination={true}
+        page={page}
+        isNext={!!isNext}
         render={(questions) => (
           <div className="mt-10 flex w-full flex-col gap-6">
             {questions.map((question) => (
@@ -68,8 +70,6 @@ const Home = async ({ searchParams }: SearchParams) => {
           </div>
         )}
       />
-
-      <Pagination page={page} isNext={!!isNext} />
     </>
   );
 };

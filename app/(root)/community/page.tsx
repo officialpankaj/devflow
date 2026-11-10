@@ -8,7 +8,6 @@ import UserCard from "@/components/cards/UserCard";
 import { UserFilters } from "@/constants/filter";
 import CommonFilter from "@/components/filters/CommonFilter";
 import React from "react";
-import Pagination from "@/components/Pagination";
 
 const Community = async ({ searchParams }: RouteParams) => {
   const { page, pageSize, query, filter } = await searchParams;
@@ -40,6 +39,9 @@ const Community = async ({ searchParams }: RouteParams) => {
         success={success}
         error={error}
         data={users}
+        showPagination={true}
+        page={page}
+        isNext={!!isNext}
         empty={EMPTY_USERS}
         render={(users: IUser[]) => (
           <div className="mt-12 flex flex-wrap gap-5">
@@ -49,8 +51,6 @@ const Community = async ({ searchParams }: RouteParams) => {
           </div>
         )}
       />
-
-      <Pagination page={page} isNext={!!isNext} />
     </div>
   );
 };

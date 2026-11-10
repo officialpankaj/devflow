@@ -7,7 +7,6 @@ import { EMPTY_COLLECTIONS } from "@/constants/states";
 import { getSavedQuestions } from "@/lib/actions/collection.action";
 import CommonFilter from "@/components/filters/CommonFilter";
 import { CollectionFilters } from "@/constants/filter";
-import Pagination from "@/components/Pagination";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -45,6 +44,9 @@ const Collection = async ({ searchParams }: SearchParams) => {
         success={success}
         error={error}
         data={collection}
+        showPagination={true}
+        page={page}
+        isNext={!!isNext}
         empty={EMPTY_COLLECTIONS}
         render={(collection) => (
           <div className="mt-10 flex w-full flex-col gap-6">
@@ -54,8 +56,6 @@ const Collection = async ({ searchParams }: SearchParams) => {
           </div>
         )}
       />
-
-      <Pagination page={page} isNext={!!isNext} />
     </>
   );
 };

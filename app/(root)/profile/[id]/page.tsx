@@ -12,7 +12,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from "@/constants/states";
 import DataRenderer from "@/components/DataRenderer";
 import QuestionCard from "@/components/cards/QuestionCard";
-import Pagination from "@/components/Pagination";
 import AnswerCard from "@/components/cards/AnswerCard";
 import TagCard from "@/components/cards/TagCard";
 import ROUTES from "@/constants/routes";
@@ -123,6 +122,9 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
               success={userQuestionsSuccess}
               error={userQuestionsError}
               empty={EMPTY_QUESTION}
+              showPagination={true}
+              page={page}
+              isNext={hasMoreQuestions}
               render={(questions) => (
                 <div className="flex flex-col gap-6">
                   {questions?.map((question) => (
@@ -135,8 +137,6 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
                 </div>
               )}
             />
-
-            <Pagination page={page} isNext={!!hasMoreQuestions} />
           </TabsContent>
           <TabsContent value="answers" className="flex w-full flex-col gap-6">
             <DataRenderer
@@ -144,6 +144,9 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
               success={userAnswersSuccess}
               error={userAnswerError}
               empty={EMPTY_ANSWERS}
+              showPagination={true}
+              page={page}
+              isNext={hasMoreAnswers}
               render={(answers) => (
                 <div className="flex flex-col gap-10">
                   {answers?.map((answer) => (
@@ -159,8 +162,6 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
                 </div>
               )}
             />
-
-            <Pagination page={page} isNext={!!hasMoreAnswers} />
           </TabsContent>
         </Tabs>
 

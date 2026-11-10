@@ -7,7 +7,6 @@ import { EMPTY_TAGS } from "@/constants/states";
 import TagCard from "@/components/cards/TagCard";
 import CommonFilter from "@/components/filters/CommonFilter";
 import { TagFilters } from "@/constants/filter";
-import Pagination from "@/components/Pagination";
 
 const Tags = async ({ searchParams }: RouteParams) => {
   const { page, pageSize, filter, query } = await searchParams;
@@ -40,6 +39,9 @@ const Tags = async ({ searchParams }: RouteParams) => {
         success={success}
         data={tags}
         empty={EMPTY_TAGS}
+        showPagination={true}
+        page={page}
+        isNext={!!isNext}
         render={(tags) => (
           <div className="mt-10 flex w-full flex-wrap gap-4">
             {tags.map((tag) => (
@@ -48,8 +50,6 @@ const Tags = async ({ searchParams }: RouteParams) => {
           </div>
         )}
       />
-
-      <Pagination page={page} isNext={!!isNext} />
     </>
   );
 };

@@ -7,7 +7,6 @@ import { EMPTY_QUESTION } from "@/constants/states";
 import QuestionCard from "@/components/cards/QuestionCard";
 import CommonFilter from "@/components/filters/CommonFilter";
 import { TagQuestionFilters } from "@/constants/filter";
-import Pagination from "@/components/Pagination";
 
 const TagDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
@@ -43,6 +42,9 @@ const TagDetails = async ({ params, searchParams }: RouteParams) => {
         success={success}
         data={questions}
         empty={EMPTY_QUESTION}
+        showPagination={true}
+        page={page}
+        isNext={!!isNext}
         render={(questions) => (
           <div className="mt-10 flex w-full flex-col gap-6">
             {questions.map((question) => (
@@ -51,8 +53,6 @@ const TagDetails = async ({ params, searchParams }: RouteParams) => {
           </div>
         )}
       />
-
-      <Pagination page={page} isNext={!!isNext} />
     </>
   );
 };
