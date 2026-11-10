@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Pagination from "@/components/Pagination";
 
 interface Props<T> {
   success: boolean;
@@ -20,6 +21,9 @@ interface Props<T> {
     };
   };
   render: (data: T[]) => React.ReactNode;
+  showPagination?: boolean;
+  isNext?: boolean;
+  page?: number | undefined | string;
 }
 
 interface StateSkeletonProps {
@@ -55,7 +59,16 @@ const StateSkeleton = ({ image, title, message, button }: StateSkeletonProps) =>
   </div>
 );
 
-const DataRenderer = <T,>({ success, error, data, empty = DEFAULT_EMPTY, render }: Props<T>) => {
+const DataRenderer = <T,>({
+  success,
+  error,
+  data,
+  empty = DEFAULT_EMPTY,
+  render,
+  showPagination = false,
+  isNext = false,
+  page = 1,
+}: Props<T>) => {
   if (!success) {
     return (
       <StateSkeleton
@@ -84,6 +97,11 @@ const DataRenderer = <T,>({ success, error, data, empty = DEFAULT_EMPTY, render 
         button={empty.button}
       />
     );
-  return <div>{render(data)}</div>;
+  return (
+    <div className="flex flex-col gap-10">
+      {render(data)}
+      {showPagination && <Pagination isNext={isNext} page={page || 1} />}
+    </div>
+  );
 };
 export default DataRenderer;

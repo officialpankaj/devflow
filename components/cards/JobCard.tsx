@@ -2,11 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 
 interface Props {
-  companyImg?: string;
+  companyImg?: string | null;
   title: string;
   description: string;
   location: string;
-  compensation?: string;
+  compensation?: string | null;
   href: string;
   employmentType: string;
 }
@@ -29,7 +29,10 @@ const JobCard = ({ companyImg, title, description, location, compensation, href,
             {location}
           </span>
         </div>
-        <p className="text-dark500_light700 body-regular line-clamp-2">{description?.slice(0, 200)}</p>
+        <div
+          className="text-dark500_light700 body-regular line-clamp-2"
+          dangerouslySetInnerHTML={{ __html: description }}
+        ></div>
         <div className="flex-between mt-3 flex-wrap gap-3 sm:mt-5">
           <div className="text-dark400_light500 body-regular flex flex-wrap gap-3 sm:gap-6">
             <span className="flex-center gap-1">
@@ -38,7 +41,7 @@ const JobCard = ({ companyImg, title, description, location, compensation, href,
             </span>
             <span className="flex-center gap-1">
               <Image src="/icons/currency-dollar-circle.svg" alt="Money" width={20} height={20} />
-              {compensation || "not disclosed"}
+              {compensation || "Not disclosed"}
             </span>
           </div>
 

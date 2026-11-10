@@ -61,3 +61,8 @@ export const EMPTY_TOP_TAGS = {
   title: "No tags found",
   message: "No tags have been created yet.",
 };
+
+export const EMPTY_JOBS = {
+  title: "No jobs found",
+  message: "Try with a different country or search filter",
+};

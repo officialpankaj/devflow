@@ -99,3 +99,44 @@ interface GlobalSearchedItem {
   type: "question" | "answer" | "user" | "tag";
   title: string;
 }
+
+export type EmploymentType = "Full Time" | "Part Time" | "Contract" | "Internship" | "Temporary";
+
+export type SalaryPeriod = "annual" | "monthly" | "weekly" | "hourly";
+
+export interface IJob {
+  title: string;
+  excerpt: string;
+
+  companyName: string;
+  companySlug: string;
+  companyLogo: string | null;
+
+  employmentType: EmploymentType;
+
+  minSalary: number | null;
+  maxSalary: number | null;
+  salaryPeriod: SalaryPeriod | null;
+  currency: string | null;
+
+  seniority: string[];
+
+  locationRestrictions: string[];
+  timezoneRestrictions: number[];
+
+  categories: string[];
+  parentCategories: string[];
+
+  description: string;
+
+  pubDate: number;
+  expiryDate: number;
+
+  applicationLink: string;
+  guid: string;
+}
+
+export interface JobsApiResponse {
+  jobs: IJob[];
+  isNext: number;
+}

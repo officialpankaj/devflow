@@ -26,8 +26,11 @@ const LocalSearch = ({ route, imgSrc, otherClasses = "", placeholder, iconPositi
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchQuery) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("page");
+
         const newURL = formUrlQuery({
-          params: searchParams.toString(),
+          params: params.toString(),
           key: "query",
           value: searchQuery,
         });

@@ -14,15 +14,19 @@ interface Props {
   filters: Filter[];
   otherClasses?: string;
   containerClasses?: string;
+  placeholder?: string;
 }
 
-const CommonFilter = ({ filters, otherClasses = "", containerClasses = "" }: Props) => {
+const CommonFilter = ({
+  filters,
+  otherClasses = "",
+  containerClasses = "",
+  placeholder = "Select a filter",
+}: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const paramsFilter = searchParams.get("filter");
-
-  console.log("paramsFilter", paramsFilter);
 
   const handleUpdateParams = (value: string | null) => {
     console.log("value", value);
@@ -44,7 +48,7 @@ const CommonFilter = ({ filters, otherClasses = "", containerClasses = "" }: Pro
           aria-label="Filter options"
         >
           <div className="line-clamp-1 flex-1 text-left">
-            <SelectValue placeholder="Select a filter" />
+            <SelectValue placeholder={placeholder} />
           </div>
         </SelectTrigger>
         <SelectContent>

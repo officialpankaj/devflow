@@ -3,6 +3,7 @@ import { IUserDoc } from "@/database/user.model";
 import { IAccountDoc } from "@/database/account.model";
 import ROUTES from "@/constants/routes";
 import { SignInWithOAuthParams } from "@/types/action";
+import { ActionResponse, JobsApiResponse } from "@/types/global";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
 
@@ -43,5 +44,23 @@ export const api = {
         body: JSON.stringify({ question, content, userAnswer }),
         timeout: 100000,
       }),
+  },
+  jobs: {
+    getJobs: ({
+      query,
+      page,
+      filter,
+    }: {
+      query?: string;
+      page: number;
+      filter?: string;
+    }): Promise<ActionResponse<JobsApiResponse>> =>
+      fetchHandler(
+        `${API_BASE_URL}/jobs?${new URLSearchParams({ query: query || "", page: String(page), filter: filter || "" })}`,
+        {
+          method: "GET",
+          timeout: 100000,
+        }
+      ),
   },
 };

@@ -40,7 +40,7 @@ const AuthSessionProvider = async ({ children }: { children: React.ReactNode }) 
 const RootLayout = ({ children }: LayoutProps<"/">) => {
   const content = (
     <>
-      <Themeprovider attribute="class" defaultTheme="system" enableSystem={true} disableTransitionOnChange={true}>
+      <Themeprovider attribute="class" defaultTheme="dark" enableSystem={true} disableTransitionOnChange={true}>
         {children}
       </Themeprovider>
       <Toaster />

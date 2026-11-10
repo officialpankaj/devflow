@@ -1,10 +1,33 @@
 import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
 import CommonFilter from "@/components/filters/CommonFilter";
-import { UserFilters } from "@/constants/filter";
-import JobCard from "../../../components/cards/JobCard";
+import { JobsFilters } from "@/constants/filter";
+import { api } from "@/lib/api";
+import { IJob, RouteParams } from "@/types/global";
+import DataRenderer from "@/components/DataRenderer";
+import { EMPTY_JOBS } from "@/constants/states";
+import JobCard from "@/components/cards/JobCard";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const Jobs = () => {
+const Jobs = async ({ params, searchParams }: RouteParams) => {
+  const { query, page, filter } = await searchParams;
+
+  const { data, error, success } = await api.jobs.getJobs({ query, page: Number(page) || 1, filter: filter });
+
+  const formatSalary = (minSalary?: number | null, maxSalary?: number | null, currency?: string | null) => {
+    const formattedCurrency = currency || "";
+    if (minSalary && maxSalary) {
+      return `${Number(minSalary)} ${formattedCurrency} - ${Number(maxSalary)} ${formattedCurrency}`;
+    } else if (minSalary && !maxSalary) {
+      return `Min ${Number(minSalary)}${formattedCurrency}`;
+    } else if (!minSalary && maxSalary) {
+      return `Upto ${Number(maxSalary)}${formattedCurrency}`;
+    }
+
+    return null;
+  };
+
   return (
     <div>
       <h1 className="h1-bold text-dark400_light900">All Jobs</h1>
@@ -16,36 +39,47 @@ const Jobs = () => {
           otherClasses="flex-1"
         />
 
-        <CommonFilter filters={UserFilters} otherClasses="min-h-[56px]! sm:min-w-[170px]" />
+        <CommonFilter filters={JobsFilters} otherClasses="min-h-[56px]! sm:min-w-[170px]" />
       </div>
 
-      <div className="mt-12 flex flex-wrap gap-5">
-        <JobCard
-          companyImg=""
-          title="Engineering Manager - EU"
-          location="Baltimore, Maryland, US"
-          compensation="€150K - €250K"
-          description="We are looking for a null null for for a null null for an immediate opening in Baltimore, Maryland. You should have for a null null for an immediate opening in Baltimore, Maryland. You should have opening in Baltimore, Maryland. You should have for a null null for an immediate opening in Baltimore, Maryland. You should have 1-2 years of recent experience in your specialty and a willingness to be flexible and adaptable in forefront of discovery, innovation, and medical advances for over 125 years. Our reputation"
-          href="https://jobs.ashbyhq.com/Ashby/86a60834-ba64-484d-9658-afa1bc97a957/application"
-          employmentType="Full-Time"
+      <Suspense
+        fallback={
+          <div className="mt-12 flex flex-wrap gap-5">
+            {[...Array(10).keys()].map((d, index) => (
+              <Skeleton
+                className="card-wrapper flex h-20 w-full flex-row gap-5 rounded-[10px] p-7 sm:px-11"
+                key={d + index}
+              />
+            ))}
+          </div>
+        }
+      >
+        <DataRenderer
+          success={success}
+          error={error}
+          data={data?.jobs || []}
+          empty={EMPTY_JOBS}
+          page={page}
+          showPagination={true}
+          isNext={!!data?.isNext}
+          render={(jobs: IJob[]) => (
+            <div className="mt-12 flex flex-wrap gap-5">
+              {jobs?.map((job, index) => (
+                <JobCard
+                  key={job.excerpt + index}
+                  companyImg={job.companyLogo}
+                  title={job.title}
+                  location={job.locationRestrictions?.length > 0 ? job.locationRestrictions[0] : ""}
+                  compensation={formatSalary(job.minSalary, job.maxSalary, job.currency)}
+                  description={job.description}
+                  href={job.applicationLink}
+                  employmentType={job.employmentType}
+                />
+              ))}
+            </div>
+          )}
         />
-      </div>
-
-      {/*<DataRenderer*/}
-      {/*  success={success}*/}
-      {/*  error={error}*/}
-      {/*  data={users}*/}
-      {/*  empty={EMPTY_USERS}*/}
-      {/*  render={(users: IUser[]) => (*/}
-      {/*    <div className="mt-12 flex flex-wrap gap-5">*/}
-      {/*      {users?.map((user) => (*/}
-      {/*        <UserCard key={user._id} {...user} />*/}
-      {/*      ))}*/}
-      {/*    </div>*/}
-      {/*  )}*/}
-      {/*/>*/}
-
-      {/*<Pagination page={page} isNext={!!isNext} />*/}
+      </Suspense>
     </div>
   );
 };

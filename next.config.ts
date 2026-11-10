@@ -35,6 +35,11 @@ const nextConfig: NextConfig = {
         hostname: "avatars.googleusercontent.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "cdn-images.himalayas.app",
+        port: "",
+      },
     ],
   },
 };
