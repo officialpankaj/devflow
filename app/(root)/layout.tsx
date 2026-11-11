@@ -2,15 +2,17 @@ import React, { Suspense } from "react";
 import Navbar from "@/components/navigation/navbar";
 import LeftSidebar from "@/components/navigation/LeftSidebar";
 import RightSidebar from "@/components/navigation/RightSidebar";
+import { NavbarSkeleton, LeftSidebarSkeleton } from "@/components/navigation/LayoutSkeletons";
+import RightSidebarSkeleton from "@/components/navigation/RightSidebarSkeleton";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <main className="background-light850_dark100 relative">
-      <Suspense fallback={<nav className="background-light800_dark200 fixed z-50 h-20 w-full" />}>
+      <Suspense fallback={<NavbarSkeleton />}>
         <Navbar />
       </Suspense>
       <div className="flex">
-        <Suspense fallback={<div className="h-screen max-sm:hidden lg:w-66.5" />}>
+        <Suspense fallback={<LeftSidebarSkeleton />}>
           <LeftSidebar />
         </Suspense>
 
@@ -21,7 +23,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </section>
 
-        <Suspense fallback={<div className="w-87.5 max-xl:hidden" />}>
+        <Suspense fallback={<RightSidebarSkeleton />}>
           <RightSidebar />
         </Suspense>
       </div>

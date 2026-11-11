@@ -6,6 +6,7 @@ import { cn, getTimeStamp } from "@/lib/utils";
 import Preview from "@/components/editor/Preview";
 import React, { Suspense } from "react";
 import Votes from "@/components/votes/Votes";
+import VotesSkeleton from "@/components/votes/VotesSkeleton";
 import { hasVoted } from "@/lib/actions/vote.action";
 import EditDeleteAction from "@/components/user/EditDeleteAction";
 
@@ -62,7 +63,7 @@ const AnswerCard = ({
         </div>
 
         <div className="flex justify-end">
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<VotesSkeleton />}>
             <Votes
               targetId={_id}
               targetType="answer"

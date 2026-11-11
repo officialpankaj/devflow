@@ -15,6 +15,8 @@ import AnswerForm from "@/components/forms/AnswerForm";
 import { getAnswers } from "@/lib/actions/answer.action";
 import AllAnswers from "@/components/answers/AllAnswers";
 import Votes from "@/components/votes/Votes";
+import VotesSkeleton from "@/components/votes/VotesSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { hasVoted } from "@/lib/actions/vote.action";
 import SaveQuestion from "@/components/questions/SaveQuestion";
 import { hasSavedQuestion } from "@/lib/actions/collection.action";
@@ -94,7 +96,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
           </div>
 
           <div className="flex items-center justify-end gap-4">
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<VotesSkeleton />}>
               <Votes
                 upvotes={question.upvotes}
                 downvotes={question.downvotes}
@@ -103,7 +105,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
                 targetId={question._id}
               />
             </Suspense>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Skeleton className="size-6" />}>
               <SaveQuestion questionId={question._id} hasSavedQuestionPromise={hasSavedQuestionPromise} />
             </Suspense>
           </div>
